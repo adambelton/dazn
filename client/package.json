@@ -1,26 +1,21 @@
 {
-	"name": "websocket-client",
-	"version": "1.0.0",
-	"description": "websocket-client",
 	"author": "Adam Belton",
-	"keywords": [
-		"gatsby"
-	],
-	"scripts": {
-		"dev": "gatsby develop",
-		"start": "gatsby develop",
-		"build": "gatsby build",
-		"serve": "gatsby serve",
-		"clean": "gatsby clean"
-	},
 	"dependencies": {
 		"gatsby": "^4.1.0",
 		"react": "^17.0.1",
-		"react-dom": "^17.0.1",
-		"socket.io-client": "^4.3.2"
+		"react-dom": "^17.0.1"
 	},
-	"devDependencies": {
-		"gatsby-plugin-typescript": "^4.1.0",
-		"prettier": "2.4.1"
-	}
+	"description": "websocket-client",
+	"keywords": [
+		"gatsby"
+	],
+	"name": "websocket-client",
+	"scripts": {
+		"build": "gatsby build",
+		"clean": "gatsby clean",
+		"dev": "gatsby develop",
+		"serve": "gatsby serve",
+		"start": "gatsby develop"
+	},
+	"version": "1.0.0"
 }

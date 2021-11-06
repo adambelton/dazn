@@ -1,48 +1,18 @@
 import React from 'react';
-import { io, Socket } from 'socket.io-client';
 
-type SubscriberCallback = (message: IClientMessage) => any;
+import {
+	connect,
+	disconnect,
+	emitMessage,
+	IClientMessage,
+	isConnected,
+	subscribeRoom,
+} from 'websocket-module';
 
-let connection: Socket;
-
-interface IServerMessage {
-	room: string;
-	data: {
-		name: string;
-		message: string;
-	};
-}
-
-interface IClientMessage {
-	name: string;
-	message: string;
-}
-
-function connect(receive: SubscriberCallback) {
-	connection = io('http://localhost:3000');
-
-	connection.on('message', (message: IServerMessage) => {
-		receive(message.data);
-	});
-}
-
-function disconnect() {
-	connection?.disconnect();
-}
-
-function isConnected() {
-	return connection?.connected;
-}
-
-function subscribeRoom(room: string) {
-	connection?.emit('subscribe', room);
-}
-
-function emitMessage(room: string, name: string, message: string) {
-	connection.emit('message', { room, data: { name, message } });
-}
-
-function messagesReducer(messages: IClientMessage[], message: IClientMessage) {
+export function messagesReducer(
+	messages: IClientMessage[],
+	message: IClientMessage
+) {
 	return [...messages, message];
 }
 

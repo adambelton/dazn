@@ -1,0 +1,55 @@
+{
+	"author": "Adam Belton",
+	"dependencies": {
+		"socket.io-client": "^4.3.2"
+	},
+	"devDependencies": {
+		"@size-limit/preset-small-lib": "^6.0.4",
+		"@types/jest": "^27.0.2",
+		"husky": "^7.0.4",
+		"jest": "^27.3.1",
+		"prettier": "2.4.1",
+		"size-limit": "^6.0.4",
+		"tsdx": "^0.14.1",
+		"tslib": "^2.3.1",
+		"typescript": "^4.4.4"
+	},
+	"engines": {
+		"node": ">=10"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"husky": {
+		"hooks": {
+			"pre-commit": "tsdx lint"
+		}
+	},
+	"license": "MIT",
+	"main": "dist/index.js",
+	"module": "dist/websocket-module.esm.js",
+	"name": "websocket-module",
+	"peerDependencies": {},
+	"scripts": {
+		"analyze": "size-limit --why",
+		"build": "tsdx build",
+		"lint": "tsdx lint",
+		"prepare": "tsdx build",
+		"size": "size-limit",
+		"start": "tsdx watch",
+		"test": "tsdx test"
+	},
+	"size-limit": [
+		{
+			"limit": "10 KB",
+			"path": "dist/websocket-module.cjs.production.min.js"
+		},
+		{
+			"limit": "10 KB",
+			"path": "dist/websocket-module.esm.js"
+		}
+	],
+	"typings": "dist/index.d.ts",
+	"version": "0.1.0"
+}

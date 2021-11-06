@@ -1,59 +1,58 @@
 import React from 'react';
 
-import {
-	connect,
-	disconnect,
-	emitMessage,
-	IClientMessage,
-	isConnected,
-	subscribeRoom,
-} from 'websocket-module';
+import { IClientMessage, WebsocketService } from 'websocket-module';
 
-export function messagesReducer(
-	messages: IClientMessage[],
-	message: IClientMessage
+function roomsReducer(
+	rooms: string[],
+	action: { type: 'join' | 'leave'; room: string }
 ) {
+	switch (action.type) {
+		case 'join':
+			return [...rooms, action.room];
+		case 'leave':
+			return rooms.filter((room) => room !== action.room);
+		default:
+			return rooms;
+	}
+}
+
+function messagesReducer(messages: IClientMessage[], message: IClientMessage) {
 	return [...messages, message];
 }
 
 export default function App() {
 	const [myName, setMyName] = React.useState('');
 	const [roomName, setRoomName] = React.useState('');
-	const [isJoined, setIsJoined] = React.useState(false);
+	const [joinedRooms, dispatchRooms] = React.useReducer(roomsReducer, []);
 	const [messageInput, setMessageInput] = React.useState('');
-	const [messages, dispatch] = React.useReducer(messagesReducer, []);
+	const [messages, dispatchMessage] = React.useReducer(messagesReducer, []);
+	const [wss] = React.useState(
+		() => new WebsocketService('http://localhost:3000', dispatchMessage)
+	);
 
 	const joinRoom = () => {
-		subscribeRoom(roomName);
-		setIsJoined(true);
+		wss.subscribe(roomName);
+		dispatchRooms({ type: 'join', room: roomName });
+		setRoomName('');
+	};
+
+	const leaveRoom = (room: string) => {
+		wss.unsubscribe(room);
+		dispatchRooms({ type: 'leave', room });
 	};
 
 	const sendMessage = () => {
 		if (myName.length && messageInput.length) {
-			emitMessage(roomName, myName, messageInput);
-			dispatch({ name: myName, message: messageInput });
+			wss.sendMessage(joinedRooms[0], myName, messageInput);
+			dispatchMessage({ name: myName, message: messageInput });
 			setMessageInput('');
 		}
 	};
 
-	const receiveMessage = (message: IClientMessage) => {
-		dispatch(message);
-	};
-
-	React.useEffect(() => {
-		if (roomName.length && !isConnected()) {
-			connect(receiveMessage);
-		}
-
-		if (!roomName.length && isConnected()) {
-			disconnect();
-		}
-	}, [roomName]);
-
 	return (
 		<>
 			<div>
-				<button onClick={() => console.log(isConnected())}>
+				<button onClick={() => console.log(wss.isConnected())}>
 					Check connection
 				</button>
 			</div>
@@ -90,9 +89,15 @@ export default function App() {
 					height: '500px',
 					display: 'flex',
 					flexDirection: 'column',
-					justifyContent: 'flex-end',
+					justifyContent: 'space-between',
 				}}
 			>
+				<div>
+					Joined rooms: {joinedRooms}
+					<button onClick={() => leaveRoom(joinedRooms[0])}>
+						Leave
+					</button>
+				</div>
 				<div
 					style={{
 						border: '1px solid black',
@@ -116,7 +121,11 @@ export default function App() {
 				</div>
 			</div>
 			<div
-				style={isJoined ? {} : { opacity: 0.5, pointerEvents: 'none' }}
+				style={
+					!joinedRooms.length
+						? { opacity: 0.5, pointerEvents: 'none' }
+						: {}
+				}
 			>
 				<form
 					onSubmit={(e) => {

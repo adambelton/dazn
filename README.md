@@ -2,18 +2,18 @@
 
 ## Project Description
 
-This repository contains my solution for the [DAZN frontend library coding challenge](https://gist.github.com/simontabor/b728c9852ea898af98b61e9b79fe0b40). The assignment was to build a Websocket Service that a frontend application could use to connect to a websocket server, subscribe to rooms and receive real-time updates. Functional requirements can be found on the assignment page.
+This repository contains my solution for the [DAZN frontend library coding challenge](https://gist.github.com/simontabor/b728c9852ea898af98b61e9b79fe0b40). The assignment was to build a Websocket Service that a frontend client could use to connect to a websocket server, subscribe to rooms and receive real-time updates. Functional requirements can be found on the assignment page.
 
 ## Implementation Overview
 
-The assignment only asked for the module to be built, however I wasn't overly familiar with websockets to I also built a basic websocket server and frontend client. You can start the server and client using the instructions below, however please keep in mind that as both were outside the scope of the assignment, neither adhere to best practices. **They are only included for the convenience of testing the module manually**.
+The assignment only asked for the module to be built, however I wasn't overly familiar with websockets so I also built a basic websocket server and frontend client. You can start the server and client using the instructions below, however please keep in mind that as both were outside the scope of the assignment, neither adhere to best practices. **They are only included for the convenience of testing the module manually**.
 
 ## Starting the Project
 
 -   Clone the project locally by running `git clone git@github.com:adambelton/dazn.git`.
--   Navigate to the **/server** folder, run `yarn install` to install the server dependencies, and then run `yarn dev` to start the server.
--   Navigate to the **/module** folder, run `yarn install` to install the module's dependencies, run `yarn build` to build the module and then run `yarn link` to make the module available for linking locally.
--   Navigate to the **/client** folder, run `yarn install` to install the client's dependencies, run `yarn link websocket-module` to create a symlink to the local module, and run `yarn dev` to start the client. The application can be accessed at http://localhost:8000.
+-   Navigate to the **/server** folder, run `yarn install` to install the server's dependencies, and then run `yarn dev` to start the server.
+-   Navigate to the **/module** folder, run `yarn install` to install the module's dependencies, run `yarn build` to build the module, and then run `yarn link` to make the module available for linking locally.
+-   Navigate to the **/client** folder, run `yarn install` to install the client's dependencies, run `yarn link websocket-module` to create a symlink to the local module, and then run `yarn dev` to start the client. The application can be accessed at http://localhost:8000.
 
 ## Tests
 

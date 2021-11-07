@@ -2,24 +2,26 @@ import { io, Socket } from 'socket.io-client';
 import { IServerMessage, SubscriberCallback } from './websocket-service.types';
 
 export class WebsocketService {
-	private callback: SubscriberCallback;
+	private onMessageReceipt: SubscriberCallback;
 	private socket: Socket;
 	private rooms: string[] = [];
 
-	constructor(url: string, cb: SubscriberCallback) {
+	constructor(url: string, callback: SubscriberCallback) {
 		this.socket = io(url, {
 			autoConnect: false,
 		});
 
-		this.callback = cb;
+		this.onMessageReceipt = callback;
 	}
 
 	private connect() {
-		this.socket.connect();
-
-		this.socket.on('message', (message: IServerMessage) => {
-			this.callback(message.data);
+		this.socket.on('connect', () => {
+			this.socket.on('message', (message: IServerMessage) => {
+				this.onMessageReceipt(message.data);
+			});
 		});
+
+		this.socket.connect();
 	}
 
 	private disconnect() {
@@ -36,7 +38,13 @@ export class WebsocketService {
 		}
 	}
 
-	private leaveRoom(roomName: string) {
+	private leaveRoom(roomName?: string) {
+		if (!roomName) {
+			this.rooms = [];
+			this.disconnect();
+			return;
+		}
+
 		const subscribedRooms = this.rooms.filter((room) => room != roomName);
 		this.rooms = subscribedRooms;
 
@@ -49,17 +57,30 @@ export class WebsocketService {
 		return this.socket?.connected;
 	}
 
-	subscribe(roomName: string) {
+	subscribe(roomName: string, callback?: Function) {
 		this.addRoom(roomName);
-		this.socket.emit('subscribe', roomName);
+		this.socket.emit('subscribe', roomName, callback);
 	}
 
-	unsubscribe(roomName: string) {
+	unsubscribe(roomName: string, callback?: Function) {
 		this.leaveRoom(roomName);
-		this.socket.emit('unsubscribe', roomName);
+		this.socket.emit('unsubscribe', roomName, callback);
 	}
 
-	sendMessage(room: string, name: string, message: string) {
-		this.socket?.emit('message', { room, data: { name, message } });
+	unsubscribeAll() {
+		this.leaveRoom();
+	}
+
+	sendMessage(
+		room: string,
+		name: string,
+		message: string,
+		callback?: Function
+	) {
+		this.socket?.emit(
+			'message',
+			{ room, data: { name, message } },
+			callback
+		);
 	}
 }
